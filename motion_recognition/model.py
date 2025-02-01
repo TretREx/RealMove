@@ -1,6 +1,6 @@
 import tensorflow as tf
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout
+from tensorflow.python.keras import Sequential
+from tensorflow.python.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout
 
 class AttentionLayer(tf.keras.layers.Layer):
     def __init__(self):

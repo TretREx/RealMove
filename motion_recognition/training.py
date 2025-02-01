@@ -1,7 +1,6 @@
 import numpy as np
-import tensorflow as tf
 import keras
-from keras.callbacks import LearningRateScheduler
+from tensorflow.python.keras.callbacks import LearningRateScheduler
 
 class MotionTrainer:
     def __init__(self, model, num_classes):

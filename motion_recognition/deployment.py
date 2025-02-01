@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow import tf
+
 
 class RealTimeInference:
     def __init__(self, model_path, window_size=120, overlap=0.5):
@@ -34,7 +34,7 @@ class RealTimeInference:
         
 def quantize_model(keras_model):
     """Convert and optimize model for deployment"""
-    converter = TFLiteConverter.from_keras_model(keras_model)
+    converter = tf.lite.TFLiteConverter.from_keras_model(keras_model)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     converter.target_spec.supported_types = [tf.float16]
     tflite_model = converter.convert()
