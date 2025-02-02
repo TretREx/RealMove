@@ -1,0 +1,18 @@
+{
+    "data_dir": "./datasets/train/",
+    "activity_dirs": {
+        "jump": "jump",
+        "squat": "squat",
+        "move": "move"
+    },
+    "model_paths": {
+        "keras": "./weight/model.keras",
+        "tflite": "./weight/model.tflite"
+    },
+    "scaler_path": "./weight/scaler.pkl",
+    "activity_map": {
+        "0": "Jumping",
+        "1": "Squatting",
+        "2": "Moving"
+    }
+}

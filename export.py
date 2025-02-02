@@ -1,36 +1,35 @@
+# import tensorflow as tf
+# from keras.api.models import load_model
+
+# # 加载 Keras 模型
+# model = load_model(r"./weight/model.keras", compile=False)
+
+# # 创建 TFLite 转换器
+# converter = tf.lite.TFLiteConverter.from_keras_model(model)
+
+# # 尝试启用资源变量标志
+# converter.experimental_enable_resource_variables = True
+
+# # 尝试禁用 TensorList 操作
+# converter._experimental_lower_tensor_list_ops = False
+
+# # 使用 Select TF Ops
+# converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
+
+# # 进行模型转换
+# tflite_model = converter.convert()
+
+# # 保存 TFLite 模型
+# with open("model.tflite", "wb") as f:
+#     f.write(tflite_model)
+
+# print("TFLite 模型已保存为 model.tflite")
+
+
 import tensorflow as tf
-
-# 加载 Keras 模型（H5 格式）
-h5_model_path = "./weight/model.h5"  # 替换成你的 H5 文件路径
-model = tf.keras.models.load_model(h5_model_path)
-print(f"成功加载模型：{h5_model_path}")
-
-# 创建 TFLite 转换器
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
-
-# 启用资源变量支持
-converter.experimental_enable_resource_variables = True
-
-# 使用 SELECT_TF_OPS，允许使用所有 TensorFlow 操作
-converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
-converter._experimental_lower_tensor_list_ops = False
-
-# 转换模型
-tflite_model = converter.convert()
-print("模型转换成功！")
-
-# 保存 TFLite 模型
-tflite_model_path = "./weight/model.tflite"  # 输出文件路径
-with open(tflite_model_path, "wb") as f:
-    f.write(tflite_model)
-print(f"TFLite 模型已保存至：{tflite_model_path}")
-
-# 验证转换后的 TFLite 模型
-interpreter = tf.lite.Interpreter(model_path=tflite_model_path)
-interpreter.allocate_tensors()
-
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
-
-print("输入张量信息:", input_details)
-print("输出张量信息:", output_details)
+# 加载 Keras 模型
+model = tf.keras.models.load_model('./weight/model.keras')
+# 将模型保存为 TensorFlow SavedModel 格式
+saved_model_path = './weight/tf_model'  # 不加扩展名
+model.export(saved_model_path)  # 使用 model.export() 保存为 SavedModel 格式
+print(f"模型已保存为 TensorFlow SavedModel 格式：{saved_model_path}")
