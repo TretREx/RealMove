@@ -1,40 +1,7 @@
-# import tensorflow as tf
-# import tf2onnx
-
-# # 加载 Keras 模型
-# keras_model = tf.keras.models.load_model('./weight/model.keras')
-
-# # 如果模型没有 output_names 属性，则手动添加
-# if not hasattr(keras_model, 'output_names'):
-#     keras_model.output_names = [f'output_{i}' for i in range(len(keras_model.outputs))]
-#     print("Manually added output_names:", keras_model.output_names)
-
-# # 获取模型的输入形状
-# input_shape = keras_model.input_shape
-# # 如果 batch_size 为 None，则将其固定为 1
-# input_shape_fixed = [1 if dim is None else dim for dim in input_shape]
-# print(f"Using input shape: {input_shape_fixed}")
-
-# # 定义输入签名
-# spec = (tf.TensorSpec(input_shape_fixed, tf.float32, name="input"),)
-
-# # 指定输出路径及 ONNX opset 版本
-# output_path = "./weight/model.onnx"
-# opset_version = 13  # 根据需要选择合适的 opset 版本
-
-# # 转换模型为 ONNX 格式
-# model_proto, _ = tf2onnx.convert.from_keras(
-#     keras_model,
-#     input_signature=spec,
-#     opset=opset_version,
-#     output_path=output_path
-# )
-
-# print(f"ONNX model has been saved to {output_path}")
-
 import os
 import json
 import random
+import time  # 用于计时
 import numpy as np
 import pandas as pd
 import joblib
@@ -118,8 +85,15 @@ print("Input data shape for ONNX inference:", input_data.shape)
 input_name = session.get_inputs()[0].name
 print("ONNX model input name:", input_name)
 
-# 执行推理
+# 执行推理并计时
+start_time = time.time()  # 开始计时
 outputs = session.run(None, {input_name: input_data})
+end_time = time.time()    # 推理结束计时
+
+# 计算推理耗时
+inference_time = end_time - start_time
+print("Inference time: {:.4f} seconds".format(inference_time))
+
 # 假设模型输出为 softmax 概率分布
 predictions = outputs[0]
 print("Raw predictions:", predictions)
