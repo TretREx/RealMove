@@ -6,7 +6,7 @@
         "move": "move"
     },
     "model_paths": {
-        "keras": "./weight/model.keras",
+        "keras": "./weight/best_model.keras",
         "tflite": "./weight/model.tflite"
     },
     "scaler_path": "./weight/scaler.pkl",
