@@ -15,6 +15,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import classification_report, confusion_matrix
 
+
 # -------------------------- 日志与随机种子设置 --------------------------
 logging.basicConfig(level=logging.INFO, 
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -34,8 +35,8 @@ except Exception as e:
     logging.error(f"Error reading config file: {e}")
     raise e
 
-data_dir = config["data_dir"]
-activity_dirs = config["activity_dirs"]
+data_dir = config["data_dir"]               # 原始训练数据存放目录
+activity_dirs = config["activity_dirs"]     # 各动作
 
 # -------------------------- 数据加载与预处理 --------------------------
 def load_data():
@@ -47,7 +48,7 @@ def load_data():
     activity_map = {}
     label = 0
     for activity, folder in activity_dirs.items():
-        activity_map[label] = activity.capitalize()
+        activity_map[label] = activity.capitalize() # 首字母大写
         activity_dir = os.path.join(data_dir, folder)
         if not os.path.exists(activity_dir):
             logging.warning(f"Directory {activity_dir} does not exist. Skipping.")
@@ -79,16 +80,17 @@ def pad_sequences(X, max_len=None):
     :return: 形状为 (num_samples, max_len, num_features) 的 ndarray
     """
     if max_len is None:
-        max_len = max(sample.shape[0] for sample in X)
-    num_features = X[0].shape[1]
-    X_padded = np.zeros((len(X), max_len, num_features))
-    for i, sample in enumerate(X):
-        length = sample.shape[0]
-        if length > max_len:
+        max_len = max(sample.shape[0] for sample in X)# 取样本中最长的长度
+    num_features = X[0].shape[1]# 取样本的特征数
+    X_padded = np.zeros((len(X), max_len, num_features))# 初始化补零后的样本
+    for i, sample in enumerate(X):# 遍历每个样本
+        length = sample.shape[0]# 取样本的长度
+        if length > max_len:# 如果长度大于最大长度
+            X_padded[i] = sample[:max_len, :]# 直接截取
             X_padded[i] = sample[:max_len, :]
         else:
             X_padded[i, :length, :] = sample
-    return X_padded
+    return X_padded# 返回补零后的样本
 
 def preprocess_data(X, scaler=None, fit_scaler=True):
     """
@@ -99,7 +101,7 @@ def preprocess_data(X, scaler=None, fit_scaler=True):
     :return: 归一化后的数据以及 scaler
     """
     num_samples, time_steps, num_features = X.shape
-    X_reshaped = X.reshape(-1, num_features)
+    X_reshaped = X.reshape(-1, num_features)# 展开为 (num_samples * time_steps, num_features)
     
     if scaler is None:
         scaler = StandardScaler()  # 如有需要可切换为 MinMaxScaler() 等
@@ -108,8 +110,8 @@ def preprocess_data(X, scaler=None, fit_scaler=True):
         scaler.fit(X_reshaped)
         logging.info("Fitted scaler on training data.")
     
-    X_scaled = scaler.transform(X_reshaped)
-    X_scaled = X_scaled.reshape(num_samples, time_steps, num_features)
+    X_scaled = scaler.transform(X_reshaped)# 归一化
+    X_scaled = X_scaled.reshape(num_samples, time_steps, num_features)# 还原为 (num_samples, time_steps, num_features)
     
     return X_scaled, scaler
 
@@ -154,7 +156,7 @@ def train_and_evaluate(epochs=50, batch_size=32):
     X_train, scaler = preprocess_data(X_train, scaler=None, fit_scaler=True)
     X_test, _ = preprocess_data(X_test, scaler=scaler, fit_scaler=False)
     
-    # 构建模型
+    # 构建模型（50，6）
     model = create_model(input_shape=X_train.shape[1:], num_classes=len(activity_map))
     
     # 计算类别权重，防止类别不平衡
